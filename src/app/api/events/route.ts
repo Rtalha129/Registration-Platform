@@ -64,6 +64,19 @@ export async function POST(request: NextRequest) {
     const ticket_price = Math.round(ticket_price_dollars * 100); // Convert to cents
 
     const supabase = await createClient();
+
+    // Ensure user row exists in public.users to satisfy foreign key constraint
+    const { error: userUpsertError } = await supabase.from("users").upsert({
+      id: session.user.id,
+      email: session.user.email,
+      name: session.user.name,
+      role: session.user.role,
+    });
+
+    if (userUpsertError) {
+      console.warn("[api/events] User upsert warning:", userUpsertError.message);
+    }
+
     const { data, error } = await supabase
       .from("events")
       .insert({
@@ -79,6 +92,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
+      console.error("[api/events] Event insert error:", error.message, error.details, error.hint);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 

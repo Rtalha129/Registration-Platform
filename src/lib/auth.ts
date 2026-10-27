@@ -28,11 +28,31 @@ export async function getOrganizerSession(): Promise<AuthSession> {
     }
 
     // Query public.users table to verify role
-    const { data: profile } = await supabase
+    let { data: profile } = await supabase
       .from("users")
       .select("*")
       .eq("id", authUser.id)
-      .single();
+      .maybeSingle();
+
+    if (!profile) {
+      const fallbackRole = (authUser.user_metadata?.role || "organizer") as User["role"];
+      const newProfile = {
+        id: authUser.id,
+        email: authUser.email || "",
+        name: authUser.user_metadata?.name || authUser.email?.split("@")[0] || "Organizer",
+        role: fallbackRole,
+      };
+
+      const { data: insertedProfile } = await supabase
+        .from("users")
+        .upsert(newProfile)
+        .select()
+        .maybeSingle();
+
+      if (insertedProfile) {
+        profile = insertedProfile;
+      }
+    }
 
     const role = (profile?.role || authUser.user_metadata?.role || "organizer") as User["role"];
 

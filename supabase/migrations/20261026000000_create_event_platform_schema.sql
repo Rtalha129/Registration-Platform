@@ -120,6 +120,12 @@ CREATE POLICY "Users can view their own profile"
     ON public.users FOR SELECT
     USING (auth.uid() = id);
 
+-- Organizers/Users can insert their own profile
+DROP POLICY IF EXISTS "Users can insert their own profile" ON public.users;
+CREATE POLICY "Users can insert their own profile"
+    ON public.users FOR INSERT
+    WITH CHECK (auth.uid() = id);
+
 -- Organizers/Users can update their own profile
 DROP POLICY IF EXISTS "Users can update their own profile" ON public.users;
 CREATE POLICY "Users can update their own profile"
@@ -137,40 +143,22 @@ CREATE POLICY "Anyone can view events"
 DROP POLICY IF EXISTS "Organizers can create events" ON public.events;
 CREATE POLICY "Organizers can create events"
     ON public.events FOR INSERT
-    WITH CHECK (
-        auth.uid() = user_id
-        AND EXISTS (
-            SELECT 1 FROM public.users
-            WHERE users.id = auth.uid()
-            AND users.role IN ('organizer', 'admin')
-        )
-    );
+    TO authenticated
+    WITH CHECK (auth.uid() = user_id);
 
 -- Organizers can update their own events
 DROP POLICY IF EXISTS "Organizers can update their own events" ON public.events;
 CREATE POLICY "Organizers can update their own events"
     ON public.events FOR UPDATE
-    USING (
-        auth.uid() = user_id
-        AND EXISTS (
-            SELECT 1 FROM public.users
-            WHERE users.id = auth.uid()
-            AND users.role IN ('organizer', 'admin')
-        )
-    );
+    TO authenticated
+    USING (auth.uid() = user_id);
 
 -- Organizers can delete their own events
 DROP POLICY IF EXISTS "Organizers can delete their own events" ON public.events;
 CREATE POLICY "Organizers can delete their own events"
     ON public.events FOR DELETE
-    USING (
-        auth.uid() = user_id
-        AND EXISTS (
-            SELECT 1 FROM public.users
-            WHERE users.id = auth.uid()
-            AND users.role IN ('organizer', 'admin')
-        )
-    );
+    TO authenticated
+    USING (auth.uid() = user_id);
 
 -- REGISTRATIONS POLICIES
 -- Organizers can view all registrations for their events
