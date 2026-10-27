@@ -55,7 +55,16 @@ export default function CreateEventPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Failed to publish event.");
+        let errorMsg = data.error || "Failed to publish event.";
+        if (data.details?.fieldErrors) {
+          const fieldMsgs = Object.entries(data.details.fieldErrors)
+            .map(([field, errs]) => `${field}: ${(errs as string[]).join(", ")}`)
+            .join("; ");
+          if (fieldMsgs && !errorMsg.includes(fieldMsgs)) {
+            errorMsg = `${errorMsg} (${fieldMsgs})`;
+          }
+        }
+        throw new Error(errorMsg);
       }
 
       router.push(`/dashboard/events/${data.event.id}`);
@@ -121,14 +130,13 @@ export default function CreateEventPage() {
 
             <div className="space-y-1.5">
               <label className="block text-xs font-medium text-zinc-300">
-                Program Notes & Curator’s Statement <span className="text-[#e07a5f]">*</span>
+                Form Description / Event Notes <span className="text-zinc-500 font-normal">(Optional)</span>
               </label>
               <textarea
-                rows={5}
-                placeholder="Outline the schedule, keynotes, location context, and guest notes..."
+                rows={4}
+                placeholder="Briefly describe your event, instructions, location, or notes for guests..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                required
                 className="w-full rounded-lg border border-white/[0.08] bg-[#14151a] px-3.5 py-2.5 text-sm text-[#f4f3ef] placeholder:text-zinc-600 focus:outline-none focus:border-[#e07a5f] transition-colors leading-relaxed"
               />
             </div>

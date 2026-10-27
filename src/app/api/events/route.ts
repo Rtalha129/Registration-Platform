@@ -52,8 +52,16 @@ export async function POST(request: NextRequest) {
     const parseResult = CreateEventSchema.safeParse(body);
 
     if (!parseResult.success) {
+      const fieldErrors = parseResult.error.flatten().fieldErrors;
+      const issues = Object.entries(fieldErrors)
+        .map(([field, errs]) => `${field}: ${(errs as string[]).join(", ")}`)
+        .join("; ");
+      console.warn("[api/events] Validation failed:", issues, fieldErrors);
       return NextResponse.json(
-        { error: "Validation failed", details: parseResult.error.flatten() },
+        {
+          error: issues ? `Validation failed: ${issues}` : "Validation failed",
+          details: parseResult.error.flatten(),
+        },
         { status: 400 }
       );
     }

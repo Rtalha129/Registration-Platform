@@ -51,9 +51,9 @@ export interface OrganizerStats {
 
 // Zod Schema for Dynamic Custom Fields
 export const CustomFieldSchema = z.object({
-  id: z.string().min(1, "Field ID is required"),
-  label: z.string().min(1, "Label is required"),
-  type: z.enum(["text", "number", "select", "checkbox", "textarea"]),
+  id: z.string().optional().transform((v) => v || `field_${Date.now().toString(36)}`),
+  label: z.string().default("Question"),
+  type: z.enum(["text", "number", "select", "checkbox", "textarea"]).default("text"),
   required: z.boolean().default(false),
   placeholder: z.string().optional(),
   options: z.array(z.string()).optional(),
@@ -62,11 +62,15 @@ export const CustomFieldSchema = z.object({
 
 // Zod Schema for Event Creation / Updating
 export const CreateEventSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters").max(120),
-  description: z.string().min(10, "Description must be at least 10 characters"),
-  ticket_price_dollars: z.number().min(0, "Price cannot be negative"), // input as dollars/free, saved in cents
+  title: z.string().min(1, "Title is required").max(200),
+  description: z.string().nullish().transform((v) => v || ""),
+  ticket_price_dollars: z
+    .union([z.number(), z.string()])
+    .transform((v) => Number(v) || 0)
+    .refine((v) => v >= 0, "Price cannot be negative")
+    .default(0),
   currency: z.string().default("USD"),
-  email_template: z.string().min(5, "Email template is required"),
+  email_template: z.string().nullish().transform((v) => v || ""),
   custom_fields: z.array(CustomFieldSchema).default([]),
 });
 
