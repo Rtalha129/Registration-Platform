@@ -1,8 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Calendar, ShieldCheck, Tag, Sparkles } from "lucide-react";
+import { ArrowLeft, Calendar, Ticket, Compass, CheckCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { Badge } from "@/components/ui/badge";
 import { DynamicRegistrationForm } from "@/components/events/dynamic-registration-form";
 import { formatTicketPrice, formatDate } from "@/lib/utils";
 import type { EventWithParsedFields, CustomField } from "@/types/models";
@@ -43,83 +42,107 @@ export default async function PublicEventPage({ params }: PublicEventPageProps) 
 
   return (
     <div className="flex-1 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto space-y-8">
-        {/* Back Link */}
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to All Events
-        </Link>
-
-        {/* Event Header Banner */}
-        <div className="p-8 rounded-3xl glass-panel relative overflow-hidden">
-          <div className="flex flex-wrap items-center gap-2 mb-3">
-            <Badge variant={isFree ? "success" : "default"}>
-              <Tag className="w-3 h-3 mr-1" />
-              {formatTicketPrice(event.ticket_price, event.currency)}
-            </Badge>
-            <Badge variant="outline">
-              <Calendar className="w-3 h-3 mr-1 text-indigo-400" />
-              Published {formatDate(event.created_at)}
-            </Badge>
-            <Badge variant="secondary">Instant QR Ticket</Badge>
-          </div>
-
-          <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-snug">
-            {event.title}
-          </h1>
-
-          <p className="mt-4 text-sm sm:text-base text-slate-300 leading-relaxed max-w-3xl">
-            {event.description}
-          </p>
+      <div className="max-w-4xl mx-auto space-y-10">
+        {/* Navigation Return */}
+        <div>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-xs font-mono text-zinc-400 hover:text-[#f4f3ef] transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 text-[#e07a5f]" />
+            Return to Index of Gatherings
+          </Link>
         </div>
 
-        {/* Registration Section */}
+        {/* Monograph Header */}
+        <div className="editorial-card p-8 sm:p-10 space-y-6">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.08] pb-5">
+            <div className="flex items-center gap-3">
+              <span className="stamp-badge">
+                {isFree ? "Open Admission" : "Ticketed Gathering"}
+              </span>
+              <span className="font-mono text-xs text-zinc-400">
+                № {event.id.slice(0, 8)}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-4 text-xs font-mono text-zinc-400">
+              <span className="flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5 text-[#e07a5f]" />
+                {formatDate(event.created_at)}
+              </span>
+              <span className="text-zinc-600">·</span>
+              <span className="text-[#f4f3ef] font-medium">
+                {formatTicketPrice(event.ticket_price, event.currency)}
+              </span>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h1 className="font-serif text-3xl sm:text-5xl text-[#f4f3ef] font-normal tracking-tight leading-[1.15]">
+              {event.title}
+            </h1>
+
+            <p className="text-sm sm:text-base text-zinc-300 leading-relaxed max-w-3xl whitespace-pre-line font-normal">
+              {event.description}
+            </p>
+          </div>
+        </div>
+
+        {/* Registration & Protocol Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left: What to Expect */}
+          {/* Left: Guest Etiquette & Information */}
           <div className="lg:col-span-5 space-y-4">
-            <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-indigo-400" />
-                Admission & Badge Details
-              </h3>
-              <ul className="text-xs text-slate-400 space-y-3 leading-relaxed">
-                <li className="flex items-start gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-indigo-400 mt-1.5 shrink-0" />
+            <div className="editorial-card p-6 space-y-4">
+              <div className="flex items-center gap-2 border-b border-white/[0.06] pb-3">
+                <Compass className="w-4 h-4 text-[#e07a5f]" />
+                <h3 className="font-serif text-base text-[#f4f3ef] font-normal">
+                  Guest Protocols & Admission
+                </h3>
+              </div>
+
+              <ul className="text-xs text-zinc-400 space-y-3.5 leading-relaxed">
+                <li className="flex items-start gap-2.5">
+                  <CheckCircle className="w-4 h-4 text-[#2a9d8f] shrink-0 mt-0.5" />
                   <span>
-                    Each attendee receives a unique <strong>check_in_token UUID</strong> pass.
+                    <strong>Direct Pass Issuance:</strong> Once registered, you will immediately receive a digital admission slip with your personal verification token.
                   </span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0" />
+                <li className="flex items-start gap-2.5">
+                  <CheckCircle className="w-4 h-4 text-[#2a9d8f] shrink-0 mt-0.5" />
                   <span>
-                    Door organizers will scan your ticket badge for instant verification.
+                    <strong>Reception Desk Check-In:</strong> Present your token voucher or your full name to our door staff upon arrival.
                   </span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-violet-400 mt-1.5 shrink-0" />
+                <li className="flex items-start gap-2.5">
+                  <CheckCircle className="w-4 h-4 text-[#2a9d8f] shrink-0 mt-0.5" />
                   <span>
-                    Custom attendee survey answers are securely encrypted in JSONB format.
+                    <strong>Private Curator Handling:</strong> Inquiries submitted with your RSVP are reviewed exclusively by the host organizer.
                   </span>
                 </li>
               </ul>
             </div>
 
-            <div className="p-4 rounded-xl bg-indigo-950/20 border border-indigo-500/20 text-xs text-indigo-300 flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-indigo-400 shrink-0" />
-              <span>Event Organizers manage registrations in real time via EventFlow.</span>
+            <div className="tactile-panel p-4 flex items-center gap-3">
+              <Ticket className="w-4 h-4 text-[#e07a5f] shrink-0" />
+              <p className="text-[11px] text-zinc-400 font-mono leading-tight">
+                Self-hosted & curated on EventFlow Studio. Independent guest management.
+              </p>
             </div>
           </div>
 
-          {/* Right: Dynamic Registration Form */}
+          {/* Right: Registration Ledger Form */}
           <div className="lg:col-span-7">
-            <div className="p-6 sm:p-8 rounded-3xl glass-panel">
-              <div className="mb-6">
-                <h2 className="text-xl font-bold text-white">Attendee Registration</h2>
-                <p className="text-xs text-slate-400 mt-1">
-                  Complete the form below to secure your entry pass
+            <div className="editorial-card p-6 sm:p-8 space-y-6">
+              <div className="border-b border-white/[0.06] pb-4">
+                <span className="font-mono text-[10px] tracking-widest text-[#e07a5f] uppercase block">
+                  Guest Ledger
+                </span>
+                <h2 className="font-serif text-2xl text-[#f4f3ef] font-normal mt-0.5">
+                  Reserve Your Place
+                </h2>
+                <p className="text-xs text-zinc-400 mt-1">
+                  Complete the entry slip below to receive your admission pass.
                 </p>
               </div>
 
@@ -131,3 +154,4 @@ export default async function PublicEventPage({ params }: PublicEventPageProps) 
     </div>
   );
 }
+

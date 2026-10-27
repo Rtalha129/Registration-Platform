@@ -3,9 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Calendar, CheckCircle2, LayoutDashboard, LogOut, Sparkles } from "lucide-react";
+import { Calendar, LayoutDashboard, LogOut } from "lucide-react";
 import { Button } from "../ui/button";
-import { Badge } from "../ui/badge";
 
 interface NavbarProps {
   user?: {
@@ -34,58 +33,58 @@ export function Navbar({ user }: NavbarProps) {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-50 w-full border-b border-white/[0.07] bg-[#0c0d10]/95 backdrop-blur-md">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-15 flex items-center justify-between">
         {/* Brand */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-transform">
-            <Sparkles className="w-5 h-5 text-indigo-100" />
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="h-8 w-8 rounded-lg bg-[#181a22] border border-white/[0.12] flex items-center justify-center text-[#f4f3ef] font-serif text-base font-semibold group-hover:border-white/30 transition-colors shadow-sm">
+            E
           </div>
-          <div className="flex flex-col">
-            <span className="font-bold text-lg tracking-tight text-white flex items-center gap-1.5">
+          <div className="flex items-baseline gap-2">
+            <span className="font-serif text-lg tracking-tight font-medium text-[#f4f3ef]">
               EventFlow
-              <span className="text-[10px] px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-400 font-semibold border border-indigo-500/30">
-                PRO
-              </span>
             </span>
-            <span className="text-[11px] text-slate-400 -mt-1">Organizer & Registration Platform</span>
+            <span className="text-[10px] font-mono tracking-widest uppercase text-[#7d8290]">
+              Studio
+            </span>
           </div>
         </Link>
 
         {/* Navigation links */}
-        <nav className="hidden md:flex items-center gap-6 text-sm">
+        <nav className="hidden md:flex items-center gap-7 text-xs font-sans tracking-tight">
           <Link
             href="/"
-            className="text-slate-300 hover:text-white transition-colors flex items-center gap-1.5"
+            className="text-[#9ba0aa] hover:text-[#f4f3ef] transition-colors flex items-center gap-1.5"
           >
-            <Calendar className="w-4 h-4 text-indigo-400" />
-            Events
+            <Calendar className="w-3.5 h-3.5 text-[#7d8290]" />
+            Gatherings
           </Link>
           <Link
             href="/dashboard"
-            className="text-slate-300 hover:text-white transition-colors flex items-center gap-1.5"
+            className="text-[#9ba0aa] hover:text-[#f4f3ef] transition-colors flex items-center gap-1.5"
           >
-            <LayoutDashboard className="w-4 h-4 text-indigo-400" />
-            Organizer Dashboard
+            <LayoutDashboard className="w-3.5 h-3.5 text-[#7d8290]" />
+            Organizer Desk
           </Link>
         </nav>
 
         {/* User Session / Auth Controls */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           {user ? (
             <div className="flex items-center gap-3">
               <div className="hidden sm:flex flex-col items-end">
-                <span className="text-xs font-medium text-slate-200">{user.name || user.email}</span>
-                <Badge variant="default" className="text-[10px] py-0 px-2 mt-0.5">
-                  <CheckCircle2 className="w-2.5 h-2.5 mr-0.5 text-indigo-400" />
+                <span className="text-xs font-medium text-[#e4e6ed] leading-none">
+                  {user.name || user.email}
+                </span>
+                <span className="text-[10px] text-[#7d8290] font-mono mt-0.5 flex items-center gap-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 inline-block" />
                   Organizer
-                </Badge>
+                </span>
               </div>
 
               <Link href="/dashboard">
-                <Button size="sm" variant="secondary" className="gap-1.5">
-                  <LayoutDashboard className="w-3.5 h-3.5 text-indigo-400" />
-                  Dashboard
+                <Button size="sm" variant="secondary" className="text-xs">
+                  Desk
                 </Button>
               </Link>
 
@@ -94,22 +93,22 @@ export function Navbar({ user }: NavbarProps) {
                 variant="ghost"
                 onClick={handleSignOut}
                 isLoading={isLoggingOut}
-                className="text-slate-400 hover:text-rose-400"
+                className="text-[#7d8290] hover:text-[#f4f3ef] p-1.5 h-8 w-8 rounded-lg"
                 title="Sign out"
               >
-                <LogOut className="w-4 h-4" />
+                <LogOut className="w-3.5 h-3.5" />
               </Button>
             </div>
           ) : (
             <div className="flex items-center gap-2">
               <Link href="/login">
-                <Button size="sm" variant="ghost" className="text-xs text-slate-300 hover:text-white">
+                <Button size="sm" variant="ghost" className="text-xs">
                   Sign In
                 </Button>
               </Link>
               <Link href="/signup">
                 <Button size="sm" variant="primary" className="text-xs">
-                  Sign Up
+                  Host an Event
                 </Button>
               </Link>
             </div>

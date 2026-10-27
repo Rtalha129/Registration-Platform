@@ -3,11 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ShieldCheck } from "lucide-react";
+import { ArrowRight, AlertCircle, Compass, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { createClient } from "@/lib/supabase/client";
 
 export default function SignupPage() {
@@ -44,124 +42,144 @@ export default function SignupPage() {
       router.push("/dashboard");
       router.refresh();
     } catch (err: any) {
-      setError(err.message || "Signup failed. Please try again.");
+      setError(err.message || "Registration failed. Please check your details and try again.");
       setIsLoading(false);
     }
   };
 
   return (
     <div className="flex-1 flex items-center justify-center px-4 py-16">
-      <div className="w-full max-w-md space-y-6">
-        <div className="text-center space-y-2">
-          <Badge variant="default" className="text-xs">
-            <ShieldCheck className="w-3.5 h-3.5 mr-1 text-indigo-400" />
-            Organizer Registration
-          </Badge>
-          <h1 className="text-2xl font-bold tracking-tight text-white">
-            Create an Event Organizer Account
+      <div className="w-full max-w-md space-y-8">
+        {/* Entrance Heading */}
+        <div className="text-center space-y-3">
+          <div className="inline-block">
+            <span className="stamp-badge">
+              New Host Application · Studio Workspace
+            </span>
+          </div>
+
+          <h1 className="font-serif text-3xl sm:text-4xl text-[#f4f3ef] font-normal tracking-tight">
+            Join the guild of independent hosts.
           </h1>
-          <p className="text-xs text-slate-400">
-            Configure role-based access for managing ticket sales, custom forms, and check-ins
+
+          <p className="text-xs text-zinc-400 max-w-sm mx-auto leading-relaxed">
+            Publish intimate salons, design conferences, and symposiums with bespoke guest inquiries and door check-in.
           </p>
         </div>
 
-        <Card className="border-slate-800">
-          <CardHeader>
-            <CardTitle className="text-sm">Account Details</CardTitle>
-            <CardDescription className="text-xs">
-              Fill in your credentials to initialize your organizer workspace
-            </CardDescription>
-          </CardHeader>
+        {/* Studio Application Slip */}
+        <div className="editorial-card p-6 sm:p-8 space-y-6">
+          <div className="border-b border-white/[0.06] pb-3">
+            <span className="font-mono text-[10px] tracking-widest text-[#e07a5f] uppercase block">
+              Curator Dossier
+            </span>
+            <p className="text-xs text-zinc-400 mt-0.5">
+              Set up your organizer credentials to launch your studio.
+            </p>
+          </div>
 
-          <CardContent>
-            <form onSubmit={handleSignup} className="space-y-4">
-              {error && (
-                <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs">
-                  {error}
-                </div>
-              )}
-
-              <Input
-                label="Full Name"
-                placeholder="Jane Organizer"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
-
-              <Input
-                type="email"
-                label="Work Email"
-                placeholder="jane@events.org"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-
-              <Input
-                type="password"
-                label="Password"
-                placeholder="At least 6 characters"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                minLength={6}
-                required
-              />
-
-              {/* Role Selection */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-medium text-slate-300">
-                  Account Role
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setRole("organizer")}
-                    className={`p-3 rounded-xl border text-left text-xs transition-all ${
-                      role === "organizer"
-                        ? "border-indigo-500 bg-indigo-500/10 text-white font-medium"
-                        : "border-slate-800 bg-slate-900/60 text-slate-400 hover:text-white"
-                    }`}
-                  >
-                    <span className="font-semibold block text-indigo-300">Event Organizer</span>
-                    <span className="text-[10px] text-slate-400">Create & manage events</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setRole("attendee")}
-                    className={`p-3 rounded-xl border text-left text-xs transition-all ${
-                      role === "attendee"
-                        ? "border-indigo-500 bg-indigo-500/10 text-white font-medium"
-                        : "border-slate-800 bg-slate-900/60 text-slate-400 hover:text-white"
-                    }`}
-                  >
-                    <span className="font-semibold block text-slate-300">Attendee</span>
-                    <span className="text-[10px] text-slate-400">View ticket passes</span>
-                  </button>
-                </div>
+          <form onSubmit={handleSignup} className="space-y-4">
+            {error && (
+              <div className="p-3.5 rounded-xl bg-[#e07a5f]/10 border border-[#e07a5f]/30 text-[#e07a5f] text-xs flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                <span>{error}</span>
               </div>
+            )}
 
+            <Input
+              label="Your Full Name"
+              placeholder="e.g. Maya Lin"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+
+            <Input
+              type="email"
+              label="Work / Studio Email"
+              placeholder="maya@studio.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+
+            <Input
+              type="password"
+              label="Secret Passkey"
+              placeholder="At least 6 characters"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              minLength={6}
+              required
+            />
+
+            {/* Role Selection */}
+            <div className="space-y-2 pt-1">
+              <label className="block text-xs font-medium text-zinc-300">
+                Primary Intended Role
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setRole("organizer")}
+                  className={`p-3.5 rounded-xl border text-left transition-all ${
+                    role === "organizer"
+                      ? "border-[#e07a5f] bg-[#e07a5f]/10 text-[#f4f3ef]"
+                      : "border-white/[0.08] bg-[#14151a] text-zinc-400 hover:text-zinc-200"
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Compass className="w-3.5 h-3.5 text-[#e07a5f]" />
+                    <span className="font-medium text-xs text-[#f4f3ef]">Host & Curator</span>
+                  </div>
+                  <span className="text-[11px] text-zinc-400 leading-tight block">
+                    Author gatherings, configure custom questions & scan admission passes.
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setRole("attendee")}
+                  className={`p-3.5 rounded-xl border text-left transition-all ${
+                    role === "attendee"
+                      ? "border-[#e07a5f] bg-[#e07a5f]/10 text-[#f4f3ef]"
+                      : "border-white/[0.08] bg-[#14151a] text-zinc-400 hover:text-zinc-200"
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Users className="w-3.5 h-3.5 text-[#2a9d8f]" />
+                    <span className="font-medium text-xs text-[#f4f3ef]">Guest Attendee</span>
+                  </div>
+                  <span className="text-[11px] text-zinc-400 leading-tight block">
+                    RSVP to events and review personal tickets.
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            <div className="pt-2">
               <Button
                 type="submit"
-                variant="glow"
-                size="md"
+                variant="primary"
+                size="lg"
                 isLoading={isLoading}
-                className="w-full text-xs"
+                className="w-full text-xs font-medium py-3.5"
               >
-                Complete Registration
+                Initialize Organizer Workspace
+                <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
-            </form>
-
-            <div className="mt-5 pt-4 border-t border-slate-800 text-center text-xs text-slate-400">
-              Already have an organizer account?{" "}
-              <Link href="/login" className="text-indigo-400 hover:text-indigo-300 font-medium">
-                Sign In
-              </Link>
             </div>
-          </CardContent>
-        </Card>
+          </form>
+
+          <div className="pt-4 border-t border-white/[0.06] text-center text-xs text-zinc-400">
+            Already registered with an active desk?{" "}
+            <Link href="/login" className="text-[#f4f3ef] underline decoration-[#e07a5f] hover:text-[#e07a5f] transition-colors font-medium">
+              Open Sign In
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
+

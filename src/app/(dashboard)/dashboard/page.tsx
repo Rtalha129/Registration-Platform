@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { Plus, Calendar, Layers, ShieldCheck } from "lucide-react";
+import { Plus, BookOpen, Layers } from "lucide-react";
 import { getOrganizerSession } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { StatsOverview } from "@/components/dashboard/stats-overview";
 import { EventCard } from "@/components/dashboard/event-card";
 import type { EventWithParsedFields, OrganizerStats, Registration, CustomField } from "@/types/models";
@@ -71,28 +70,32 @@ export default async function DashboardPage() {
   const { events, stats } = await getOrganizerDashboardData(session.user!.id);
 
   return (
-    <div className="space-y-8">
-      {/* Dashboard Top Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <Badge variant="default" className="text-xs">
-              <ShieldCheck className="w-3.5 h-3.5 mr-1 text-indigo-400" />
-              Authenticated Organizer Session
-            </Badge>
+    <div className="space-y-10">
+      {/* Studio Desk Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6 pb-6 border-b border-white/[0.08]">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <span className="stamp-badge">
+              Active Studio Desk
+            </span>
+            <span className="font-mono text-[11px] text-zinc-500">
+              Host: {session.user?.name || "Independent Organizer"}
+            </span>
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-white">
-            Welcome back, {session.user?.name || "Organizer"}
+
+          <h1 className="font-serif text-3xl sm:text-4xl text-[#f4f3ef] font-normal tracking-tight">
+            Curator’s Working Ledger
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Manage your registered events, custom registration forms, and door check-ins
+
+          <p className="text-xs text-zinc-400 max-w-lg leading-relaxed">
+            Monitor RSVP attendance tallies, supervise custom guest inquiry ledgers, and open live reception desk scanners for door admissions.
           </p>
         </div>
 
         <Link href="/dashboard/events/new">
-          <Button variant="glow" size="md" className="gap-2">
+          <Button variant="primary" size="md" className="gap-2 shrink-0">
             <Plus className="w-4 h-4" />
-            Create New Event
+            Publish New Gathering
           </Button>
         </Link>
       </div>
@@ -100,20 +103,17 @@ export default async function DashboardPage() {
       {/* Metrics Overview */}
       <StatsOverview stats={stats} />
 
-      {/* Events Section */}
-      <div className="space-y-4">
+      {/* Events Roster Section */}
+      <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <Layers className="w-5 h-5 text-indigo-400" />
-              Your Events
+          <div className="flex items-center gap-3">
+            <Layers className="w-4 h-4 text-[#e07a5f]" />
+            <h2 className="font-serif text-xl text-[#f4f3ef] font-normal tracking-tight">
+              Published Gatherings Roster
             </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Select an event to view registrations or launch the live door check-in scanner
-            </p>
           </div>
-          <span className="text-xs font-mono text-slate-400">
-            {events.length} {events.length === 1 ? "Event" : "Events"}
+          <span className="font-mono text-xs text-zinc-500">
+            {events.length} {events.length === 1 ? "Program" : "Programs"} in Archive
           </span>
         </div>
 
@@ -124,17 +124,17 @@ export default async function DashboardPage() {
             ))}
           </div>
         ) : (
-          <div className="p-12 text-center rounded-2xl border border-dashed border-slate-800 bg-slate-900/30">
-            <Calendar className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-            <h3 className="text-base font-semibold text-white">No events published yet</h3>
-            <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-              Get started by creating your first event with custom attendee questions and ticket pricing.
+          <div className="p-12 text-center rounded-2xl border border-dashed border-white/[0.1] bg-white/[0.01]">
+            <BookOpen className="w-8 h-8 text-zinc-600 mx-auto mb-3" />
+            <h3 className="font-serif text-lg text-[#f4f3ef] font-normal">Your program ledger is empty</h3>
+            <p className="text-xs text-zinc-400 mt-1 max-w-md mx-auto leading-relaxed">
+              Begin by authoring your first salon, symposium, or exhibition. Define custom guest inquiries and issue unique door admission tokens.
             </p>
-            <div className="mt-5">
+            <div className="mt-6">
               <Link href="/dashboard/events/new">
                 <Button variant="primary" size="sm" className="gap-1.5">
                   <Plus className="w-4 h-4" />
-                  Create First Event
+                  Draft First Gathering
                 </Button>
               </Link>
             </div>
@@ -144,3 +144,4 @@ export default async function DashboardPage() {
     </div>
   );
 }
+

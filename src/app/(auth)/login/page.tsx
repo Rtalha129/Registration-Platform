@@ -3,11 +3,9 @@
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ShieldCheck } from "lucide-react";
+import { ArrowRight, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { createClient } from "@/lib/supabase/client";
 
 function LoginForm() {
@@ -47,74 +45,80 @@ function LoginForm() {
 
   return (
     <div className="flex-1 flex items-center justify-center px-4 py-16">
-      <div className="w-full max-w-md space-y-6">
-        <div className="text-center space-y-2">
-          <Badge variant="default" className="text-xs">
-            <ShieldCheck className="w-3.5 h-3.5 mr-1 text-indigo-400" />
-            Organizer Authentication
-          </Badge>
-          <h1 className="text-2xl font-bold tracking-tight text-white">
-            Sign in to EventFlow
+      <div className="w-full max-w-md space-y-8">
+        {/* Entrance Heading */}
+        <div className="text-center space-y-3">
+          <div className="inline-block">
+            <span className="stamp-badge">
+              Curator Portal · Door Access
+            </span>
+          </div>
+
+          <h1 className="font-serif text-3xl sm:text-4xl text-[#f4f3ef] font-normal tracking-tight">
+            Welcome back to your studio desk.
           </h1>
-          <p className="text-xs text-slate-400">
-            Access your events, attendee registrations, and live check-in scanner
+
+          <p className="text-xs text-zinc-400 max-w-sm mx-auto leading-relaxed">
+            Access your gatherings archive, review guest inquiry ledgers, and supervise live reception check-in.
           </p>
         </div>
 
-        {/* Standard Email / Password Form */}
-        <Card className="border-slate-800">
-          <CardHeader>
-            <CardTitle className="text-sm">Organizer Credentials</CardTitle>
-            <CardDescription className="text-xs">
-              Sign in with your Supabase account email and password
-            </CardDescription>
-          </CardHeader>
+        {/* Studio Login Slip */}
+        <div className="editorial-card p-6 sm:p-8 space-y-6">
+          <div className="border-b border-white/[0.06] pb-3">
+            <span className="font-mono text-[10px] tracking-widest text-[#e07a5f] uppercase block">
+              Authentication Credentials
+            </span>
+            <p className="text-xs text-zinc-400 mt-0.5">
+              Enter your email and password to open your active session.
+            </p>
+          </div>
 
-          <CardContent>
-            <form onSubmit={handleEmailLogin} className="space-y-4">
-              {error && (
-                <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs">
-                  {error}
-                </div>
-              )}
+          <form onSubmit={handleEmailLogin} className="space-y-4">
+            {error && (
+              <div className="p-3.5 rounded-xl bg-[#e07a5f]/10 border border-[#e07a5f]/30 text-[#e07a5f] text-xs flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                <span>{error}</span>
+              </div>
+            )}
 
-              <Input
-                type="email"
-                label="Organizer Email"
-                placeholder="organizer@yourcompany.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+            <Input
+              type="email"
+              label="Organizer Work Email"
+              placeholder="curator@studio.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
 
-              <Input
-                type="password"
-                label="Password"
-                placeholder="••••••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+            <Input
+              type="password"
+              label="Passkey / Password"
+              placeholder="••••••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
 
-              <Button
-                type="submit"
-                variant="glow"
-                size="md"
-                isLoading={isLoading}
-                className="w-full text-xs"
-              >
-                Sign In
-              </Button>
-            </form>
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              isLoading={isLoading}
+              className="w-full text-xs font-medium py-3.5"
+            >
+              Open Studio Desk
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </form>
 
-            <div className="mt-5 pt-4 border-t border-slate-800 text-center text-xs text-slate-400">
-              Need an organizer account?{" "}
-              <Link href="/signup" className="text-indigo-400 hover:text-indigo-300 font-medium">
-                Create Organizer Account
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
+          <div className="pt-4 border-t border-white/[0.06] text-center text-xs text-zinc-400">
+            Hosting gatherings for the first time?{" "}
+            <Link href="/signup" className="text-[#f4f3ef] underline decoration-[#e07a5f] hover:text-[#e07a5f] transition-colors font-medium">
+              Register an organizer desk
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -124,8 +128,8 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex-1 flex items-center justify-center p-12 text-slate-400 text-xs">
-          Loading organizer sign-in...
+        <div className="flex-1 flex items-center justify-center p-12 text-zinc-400 font-mono text-xs">
+          Opening curator portal...
         </div>
       }
     >
@@ -133,3 +137,4 @@ export default function LoginPage() {
     </Suspense>
   );
 }
+

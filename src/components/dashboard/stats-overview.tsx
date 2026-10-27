@@ -1,4 +1,3 @@
-import { DollarSign, Calendar, Users, CheckCircle } from "lucide-react";
 import { formatTicketPrice } from "@/lib/utils";
 import type { OrganizerStats } from "@/types/models";
 
@@ -9,65 +8,49 @@ interface StatsOverviewProps {
 export function StatsOverview({ stats }: StatsOverviewProps) {
   const statCards = [
     {
-      title: "Gross Revenue",
+      label: "Gross Ticket Sales",
       value: formatTicketPrice(stats.totalRevenueCents),
-      subtitle: "From paid registrations",
-      icon: DollarSign,
-      color: "text-emerald-400",
-      bg: "bg-emerald-500/10 border-emerald-500/20",
+      note: "Confirmed paid registrations",
+      accent: "text-[#f4f3ef]",
     },
     {
-      title: "Active Events",
+      label: "Active Gatherings",
       value: stats.totalEvents.toString(),
-      subtitle: "Published & collecting registrations",
-      icon: Calendar,
-      color: "text-indigo-400",
-      bg: "bg-indigo-500/10 border-indigo-500/20",
+      note: "Published on your roster",
+      accent: "text-[#f4f3ef]",
     },
     {
-      title: "Total Attendees",
+      label: "Registered Guests",
       value: stats.totalRegistrations.toString(),
-      subtitle: "Across all organized events",
-      icon: Users,
-      color: "text-violet-400",
-      bg: "bg-violet-500/10 border-violet-500/20",
+      note: "Total attendees on file",
+      accent: "text-[#f4f3ef]",
     },
     {
-      title: "Check-in Rate",
+      label: "Door Attendance Rate",
       value: `${stats.checkInRatePercentage}%`,
-      subtitle: "Real-time door check-ins",
-      icon: CheckCircle,
-      color: "text-amber-400",
-      bg: "bg-amber-500/10 border-amber-500/20",
+      note: "Guests checked in at the door",
+      accent: "text-[#e07a5f]",
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {statCards.map((card, idx) => {
-        const Icon = card.icon;
-        return (
-          <div
-            key={idx}
-            className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-md relative overflow-hidden transition-all hover:border-slate-700/80 hover:shadow-lg"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">
-                {card.title}
-              </span>
-              <div className={`p-2 rounded-xl border ${card.bg}`}>
-                <Icon className={`w-4 h-4 ${card.color}`} />
-              </div>
-            </div>
-            <div className="mt-4">
-              <span className="text-2xl font-bold tracking-tight text-white">
-                {card.value}
-              </span>
-              <p className="text-xs text-slate-400 mt-1">{card.subtitle}</p>
-            </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+      {statCards.map((card, idx) => (
+        <div
+          key={idx}
+          className="p-5 rounded-2xl bg-[#13151b] border border-white/[0.07] shadow-sm relative overflow-hidden"
+        >
+          <span className="text-[11px] font-mono tracking-wider uppercase text-[#7d8290] block">
+            {card.label}
+          </span>
+          <div className="mt-3 flex items-baseline gap-2">
+            <span className={`text-2xl font-serif font-medium tracking-tight ${card.accent}`}>
+              {card.value}
+            </span>
           </div>
-        );
-      })}
+          <p className="text-[11px] text-[#6d7280] mt-1 font-sans">{card.note}</p>
+        </div>
+      ))}
     </div>
   );
 }

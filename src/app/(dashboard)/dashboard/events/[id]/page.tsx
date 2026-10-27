@@ -60,20 +60,20 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
   return (
     <div className="space-y-6">
       {/* Navigation / Actions Bar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2 border-b border-white/[0.06]">
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors"
+          className="inline-flex items-center gap-2 text-xs font-mono text-zinc-400 hover:text-[#f4f3ef] transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Events Overview
+          <ArrowLeft className="w-3.5 h-3.5 text-[#e07a5f]" />
+          Return to Curator Roster
         </Link>
 
         <div className="flex items-center gap-2">
           <Link href={`/events/${event.id}`} target="_blank">
-            <Button size="sm" variant="outline" className="text-xs gap-1.5 border-indigo-500/30">
-              <ExternalLink className="w-3.5 h-3.5" />
-              View Public Registration Form
+            <Button size="sm" variant="outline" className="text-xs gap-1.5">
+              <ExternalLink className="w-3.5 h-3.5 text-[#e07a5f]" />
+              View Public Guest Dossier & RSVP
             </Button>
           </Link>
         </div>

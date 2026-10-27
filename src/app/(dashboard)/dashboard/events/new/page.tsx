@@ -3,10 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Calendar, DollarSign, Mail, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, DollarSign, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { DynamicFieldsBuilder } from "@/components/dashboard/dynamic-fields-builder";
 import type { CustomField } from "@/types/models";
 
@@ -18,15 +17,15 @@ export default function CreateEventPage() {
   const [ticketPriceDollars, setTicketPriceDollars] = useState<number>(0);
   const [currency, setCurrency] = useState("USD");
   const [emailTemplate, setEmailTemplate] = useState(
-    "Hi {{attendee_name}},\n\nYour registration for {{event_title}} is confirmed!\n\nYour unique check-in pass token is: {{check_in_token}}\nPresent this token or QR pass at the entrance.\n\nBest regards,\nEventFlow Organizer Team"
+    "Dear {{attendee_name}},\n\nYour guest reservation for {{event_title}} is formally confirmed.\n\nYour unique door admission pass code is: {{check_in_token}}\nPlease have your digital ticket badge or this token ready at the reception desk upon arrival.\n\nWarm regards,\nThe Organizing Committee"
   );
   const [customFields, setCustomFields] = useState<CustomField[]>([
-    { id: "company_org", label: "Company / Affiliation", type: "text", required: true },
+    { id: "company_org", label: "Studio / Affiliation", type: "text", required: true },
     {
-      id: "tshirt_size",
-      label: "T-Shirt Size",
+      id: "dietary_needs",
+      label: "Dietary Considerations",
       type: "select",
-      options: ["S", "M", "L", "XL", "2XL"],
+      options: ["None", "Vegetarian", "Vegan", "Gluten-Free"],
       required: false,
     },
   ]);
@@ -56,176 +55,185 @@ export default function CreateEventPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Failed to create event");
+        throw new Error(data.error || "Failed to publish event.");
       }
 
       router.push(`/dashboard/events/${data.event.id}`);
       router.refresh();
     } catch (err: any) {
-      setError(err.message || "Something went wrong creating the event.");
+      setError(err.message || "An unexpected error occurred while drafting the gathering.");
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
-      {/* Header & Back Link */}
-      <div className="flex items-center justify-between">
+    <div className="max-w-3xl mx-auto space-y-8">
+      {/* Navigation Return */}
+      <div>
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors"
+          className="inline-flex items-center gap-2 text-xs font-mono text-zinc-400 hover:text-[#f4f3ef] transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Dashboard
+          <ArrowLeft className="w-3.5 h-3.5 text-[#e07a5f]" />
+          Return to Studio Dashboard
         </Link>
       </div>
 
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-          <Calendar className="w-6 h-6 text-indigo-400" />
-          Create New Event
+      {/* Title & Introduction */}
+      <div className="space-y-2">
+        <span className="font-mono text-[10px] tracking-widest text-[#e07a5f] uppercase block">
+          Program Drafter · Edition 2027
+        </span>
+        <h1 className="font-serif text-3xl sm:text-4xl text-[#f4f3ef] font-normal tracking-tight">
+          Publish a New Gathering
         </h1>
-        <p className="text-xs text-slate-400 mt-1">
-          Set up event details, ticket price in cents, confirmation email template, and dynamic attendee questions.
+        <p className="text-sm text-zinc-400 max-w-xl font-normal leading-relaxed">
+          Craft your gathering dossier, set attendance admissions, configure custom guest inquiries, and compose the formal dispatch letter.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-8">
         {error && (
-          <div className="p-3.5 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs font-medium">
+          <div className="p-4 rounded-xl bg-[#e07a5f]/10 border border-[#e07a5f]/30 text-[#e07a5f] text-xs font-medium">
             {error}
           </div>
         )}
 
-        {/* Basic Event Information */}
-        <Card className="border-slate-800">
-          <CardHeader>
-            <CardTitle className="text-base">Event Details</CardTitle>
-            <CardDescription className="text-xs">
-              General title, summary, and public description for attendees
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        {/* Section 01: Gathering Dossier */}
+        <div className="editorial-card p-6 space-y-5">
+          <div className="border-b border-white/[0.06] pb-3">
+            <span className="font-mono text-[10px] tracking-widest text-[#e07a5f] uppercase">
+              Section 01 · Gathering Dossier
+            </span>
+            <h3 className="font-serif text-lg text-[#f4f3ef] font-normal tracking-tight mt-0.5">
+              Title & Program Notes
+            </h3>
+          </div>
+
+          <div className="space-y-4">
             <Input
-              label="Event Title"
-              placeholder="e.g. AI Systems & Cloud Summit 2027"
+              label="Gathering Title"
+              placeholder="e.g. Autumn Salon: Architecture, Typographic Craft & Spatial Sound"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
             />
 
             <div className="space-y-1.5">
-              <label className="block text-xs font-medium text-slate-300">
-                Description & Agenda <span className="text-rose-400">*</span>
+              <label className="block text-xs font-medium text-zinc-300">
+                Program Notes & Curator’s Statement <span className="text-[#e07a5f]">*</span>
               </label>
               <textarea
-                rows={4}
-                placeholder="Describe keynotes, schedule, perks, and target audience..."
+                rows={5}
+                placeholder="Outline the schedule, keynotes, location context, and guest notes..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
-                className="w-full rounded-xl border border-slate-700/80 bg-slate-900 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                className="w-full rounded-lg border border-white/[0.08] bg-[#14151a] px-3.5 py-2.5 text-sm text-[#f4f3ef] placeholder:text-zinc-600 focus:outline-none focus:border-[#e07a5f] transition-colors leading-relaxed"
               />
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        {/* Ticketing & Pricing */}
-        <Card className="border-slate-800">
-          <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-emerald-400" />
-              Ticket Pricing
-            </CardTitle>
-            <CardDescription className="text-xs">
-              Stored as integer cents in database schema. Set to 0 for free events.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Input
-                type="number"
-                min="0"
-                step="0.01"
-                label="Ticket Price (USD/EUR)"
-                placeholder="0.00 for Free"
-                value={ticketPriceDollars.toString()}
-                onChange={(e) => setTicketPriceDollars(parseFloat(e.target.value) || 0)}
-                helperText={
-                  ticketPriceDollars === 0
-                    ? "Event will be free of charge"
-                    : `Saved as ${Math.round(ticketPriceDollars * 100)} cents in database`
-                }
-              />
+        {/* Section 02: Admission & Pricing */}
+        <div className="editorial-card p-6 space-y-5">
+          <div className="border-b border-white/[0.06] pb-3">
+            <span className="font-mono text-[10px] tracking-widest text-[#e07a5f] uppercase">
+              Section 02 · Admission Terms
+            </span>
+            <h3 className="font-serif text-lg text-[#f4f3ef] font-normal tracking-tight mt-0.5 flex items-center gap-2">
+              <DollarSign className="w-4 h-4 text-[#2a9d8f]" />
+              Guest Admission Fare
+            </h3>
+          </div>
 
-              <div className="space-y-1.5">
-                <label className="block text-xs font-medium text-slate-300">Currency</label>
-                <select
-                  value={currency}
-                  onChange={(e) => setCurrency(e.target.value)}
-                  className="flex h-10 w-full rounded-xl border border-slate-700/80 bg-slate-900 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
-                >
-                  <option value="USD">USD ($)</option>
-                  <option value="EUR">EUR (€)</option>
-                  <option value="GBP">GBP (£)</option>
-                  <option value="CAD">CAD ($)</option>
-                </select>
-              </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input
+              type="number"
+              min="0"
+              step="0.01"
+              label="Fare per Guest"
+              placeholder="0.00 for Complimentary"
+              value={ticketPriceDollars.toString()}
+              onChange={(e) => setTicketPriceDollars(parseFloat(e.target.value) || 0)}
+              helperText={
+                ticketPriceDollars === 0
+                  ? "Open complimentary entry · No payment collected"
+                  : `Paid ticket pass · Recorded as ${Math.round(ticketPriceDollars * 100)} cents`
+              }
+            />
+
+            <div className="space-y-1.5">
+              <label className="block text-xs font-medium text-zinc-300">Currency</label>
+              <select
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value)}
+                className="flex h-10 w-full rounded-lg border border-white/[0.08] bg-[#14151a] px-3 py-2 text-sm text-[#f4f3ef] focus:outline-none focus:border-[#e07a5f] transition-colors"
+              >
+                <option value="USD">USD ($) · United States Dollar</option>
+                <option value="EUR">EUR (€) · Euro</option>
+                <option value="GBP">GBP (£) · British Pound</option>
+                <option value="CAD">CAD ($) · Canadian Dollar</option>
+              </select>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        {/* Dynamic JSONB Fields Builder */}
+        {/* Section 03: Dynamic Guest Inquiries */}
         <DynamicFieldsBuilder fields={customFields} onChange={setCustomFields} />
 
-        {/* Confirmation Email Template */}
-        <Card className="border-slate-800">
-          <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
-              <Mail className="w-4 h-4 text-indigo-400" />
-              Confirmation Email Template
-            </CardTitle>
-            <CardDescription className="text-xs">
-              Template automatically populated with attendee variables upon registration
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-1.5">
-              <textarea
-                rows={5}
-                value={emailTemplate}
-                onChange={(e) => setEmailTemplate(e.target.value)}
-                required
-                className="w-full rounded-xl border border-slate-700/80 bg-slate-900 px-3 py-2 text-sm text-slate-100 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
-              />
-              <p className="text-[11px] text-slate-400">
-                Available tags: <code className="text-indigo-300">{"{{attendee_name}}"}</code>,{" "}
-                <code className="text-indigo-300">{"{{event_title}}"}</code>,{" "}
-                <code className="text-indigo-300">{"{{check_in_token}}"}</code>
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Section 04: Confirmation Letter */}
+        <div className="editorial-card p-6 space-y-5">
+          <div className="border-b border-white/[0.06] pb-3">
+            <span className="font-mono text-[10px] tracking-widest text-[#e07a5f] uppercase">
+              Section 04 · Dispatch Letter
+            </span>
+            <h3 className="font-serif text-lg text-[#f4f3ef] font-normal tracking-tight mt-0.5 flex items-center gap-2">
+              <Mail className="w-4 h-4 text-[#e07a5f]" />
+              Guest Confirmation Letter
+            </h3>
+            <p className="text-xs text-zinc-400 mt-1">
+              Dispatched automatically to the attendee once their RSVP is recorded.
+            </p>
+          </div>
 
-        {/* Submit Actions */}
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+          <div className="space-y-3">
+            <textarea
+              rows={6}
+              value={emailTemplate}
+              onChange={(e) => setEmailTemplate(e.target.value)}
+              required
+              className="w-full rounded-lg border border-white/[0.08] bg-[#14151a] p-3.5 text-xs text-[#f4f3ef] font-mono focus:outline-none focus:border-[#e07a5f] transition-colors leading-relaxed"
+            />
+            <div className="tactile-panel p-3 text-[11px] text-zinc-400 flex flex-wrap items-center gap-2 font-mono">
+              <span className="text-zinc-500">Insertable tokens:</span>
+              <code className="text-[#e07a5f] bg-white/[0.04] px-1.5 py-0.5 rounded">{"{{attendee_name}}"}</code>
+              <code className="text-[#e07a5f] bg-white/[0.04] px-1.5 py-0.5 rounded">{"{{event_title}}"}</code>
+              <code className="text-[#e07a5f] bg-white/[0.04] px-1.5 py-0.5 rounded">{"{{check_in_token}}"}</code>
+            </div>
+          </div>
+        </div>
+
+        {/* Action Controls */}
+        <div className="flex items-center justify-between pt-4 border-t border-white/[0.06]">
           <Link href="/dashboard">
-            <Button type="button" variant="outline" size="md">
-              Cancel
+            <Button type="button" variant="ghost" size="md">
+              Discard Draft
             </Button>
           </Link>
           <Button
             type="submit"
-            variant="glow"
-            size="md"
+            variant="primary"
+            size="lg"
             isLoading={isSubmitting}
             className="gap-2 px-8"
           >
-            <CheckCircle2 className="w-4 h-4" />
-            Publish Event
+            Publish Gathering
+            <ArrowRight className="w-4 h-4" />
           </Button>
         </div>
       </form>
     </div>
   );
 }
+

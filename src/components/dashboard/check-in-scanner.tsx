@@ -8,7 +8,6 @@ import {
   Check,
   RotateCcw,
   User,
-  CreditCard,
   QrCode,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -65,13 +64,13 @@ export function CheckInScanner({ event, initialRegistrations }: CheckInScannerPr
         );
         setRecentNotification({
           type: "success",
-          message: `Checked in ${data.registration.attendee_name}!`,
+          message: `Welcomed ${data.registration.attendee_name}! Admission confirmed.`,
         });
         setTokenInput("");
       } else {
         setRecentNotification({
           type: "error",
-          message: data.error || "Token not recognized for this event.",
+          message: data.error || "Token pass not recognized for this event.",
         });
       }
     } catch (err: any) {
@@ -124,66 +123,65 @@ export function CheckInScanner({ event, initialRegistrations }: CheckInScannerPr
 
   return (
     <div className="space-y-6">
-      {/* Live Check-in Stats Banner */}
-      <div className="p-6 rounded-2xl glass-panel relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      {/* Header Banner */}
+      <div className="p-7 rounded-2xl tactile-panel flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div>
-          <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400 flex items-center gap-1.5">
-            <QrCode className="w-3.5 h-3.5" />
-            Live Check-in Desk
+          <span className="text-[11px] font-mono tracking-widest uppercase text-[#e07a5f] block mb-1">
+            Door Concierge • Guest List
           </span>
-          <h2 className="text-2xl font-bold text-white mt-1">{event.title}</h2>
-          <p className="text-xs text-slate-400 mt-1">
-            Real-time scanner & attendee management for door staff and organizers
+          <h2 className="text-2xl sm:text-3xl font-serif font-medium text-[#f4f3ef]">{event.title}</h2>
+          <p className="text-xs text-[#8c909a] mt-1 font-sans">
+            Verify attendee admission tokens and greet incoming guests
           </p>
         </div>
 
-        <div className="flex items-center gap-6 bg-slate-900/80 px-5 py-3 rounded-xl border border-slate-800">
+        <div className="flex items-center gap-6 bg-[#181a22] px-6 py-3.5 rounded-xl border border-white/[0.08]">
           <div>
-            <span className="text-xs text-slate-400 block">Checked In</span>
-            <span className="text-xl font-bold text-emerald-400">
-              {checkedInCount} / {totalCount}
+            <span className="text-[10px] font-mono uppercase text-[#787c88] block">Arrived</span>
+            <span className="text-xl font-serif font-medium text-[#f4f3ef]">
+              {checkedInCount} <span className="text-xs font-sans text-[#787c88]">/ {totalCount}</span>
             </span>
           </div>
-          <div className="h-8 w-px bg-slate-800" />
+          <div className="h-7 w-px bg-white/[0.08]" />
           <div>
-            <span className="text-xs text-slate-400 block">Attendance</span>
-            <span className="text-xl font-bold text-white">{attendanceRate}%</span>
+            <span className="text-[10px] font-mono uppercase text-[#787c88] block">Attendance</span>
+            <span className="text-xl font-serif font-medium text-[#e07a5f]">{attendanceRate}%</span>
           </div>
         </div>
       </div>
 
       {/* Quick Token / Ticket Scanner Bar */}
-      <div className="p-5 rounded-2xl bg-slate-900/90 border border-indigo-500/30 shadow-lg shadow-indigo-500/5">
+      <div className="p-5 rounded-2xl bg-[#13151b] border border-white/[0.08] shadow-sm">
         <form onSubmit={handleTokenCheckIn} className="flex flex-col sm:flex-row items-center gap-3">
           <div className="relative flex-1 w-full">
-            <QrCode className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-indigo-400" />
+            <QrCode className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#787c88]" />
             <input
               type="text"
-              placeholder="Paste check-in token UUID or scan barcode/QR..."
+              placeholder="Paste admission token UUID or scan QR barcode..."
               value={tokenInput}
               onChange={(e) => setTokenInput(e.target.value)}
-              className="w-full h-11 pl-10 pr-4 rounded-xl bg-slate-950 border border-slate-700/80 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono"
+              className="w-full h-10.5 pl-10 pr-4 rounded-xl bg-[#0e1015] border border-white/[0.09] text-xs text-[#f4f3ef] placeholder:text-[#5d6270] focus:outline-none focus:ring-1 focus:ring-white/20 font-mono tracking-tight"
             />
           </div>
           <Button
             type="submit"
-            variant="glow"
-            size="lg"
+            variant="warm"
+            size="md"
             isLoading={isProcessing}
             disabled={!tokenInput.trim()}
-            className="w-full sm:w-auto h-11 text-xs gap-1.5 px-6"
+            className="w-full sm:w-auto h-10.5 px-6 text-xs"
           >
-            <CheckCircle2 className="w-4 h-4" />
-            Instant Check-In
+            <CheckCircle2 className="w-3.5 h-3.5" />
+            Check In Guest
           </Button>
         </form>
 
         {recentNotification && (
           <div
-            className={`mt-3 p-2.5 rounded-xl text-xs font-medium flex items-center gap-2 ${
+            className={`mt-3 p-3 rounded-xl text-xs font-medium flex items-center gap-2 ${
               recentNotification.type === "success"
-                ? "bg-emerald-500/15 border border-emerald-500/30 text-emerald-300"
-                : "bg-rose-500/15 border border-rose-500/30 text-rose-300"
+                ? "bg-emerald-950/40 border border-emerald-800/40 text-emerald-300"
+                : "bg-rose-950/40 border border-rose-800/40 text-rose-300"
             }`}
           >
             {recentNotification.type === "success" ? (
@@ -197,26 +195,26 @@ export function CheckInScanner({ event, initialRegistrations }: CheckInScannerPr
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 pt-2">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#6c707d]" />
           <Input
-            placeholder="Search by attendee name, email, or token..."
+            placeholder="Search by guest name, email, or token..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 h-10 text-xs"
+            className="pl-9 h-9.5 text-xs"
           />
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           {/* Check-in status filter */}
-          <div className="flex items-center rounded-xl bg-slate-900 border border-slate-800 p-1">
+          <div className="flex items-center rounded-xl bg-[#14161d] border border-white/[0.08] p-1">
             <button
               onClick={() => setStatusFilter("all")}
               className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
                 statusFilter === "all"
-                  ? "bg-indigo-600 text-white"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-[#20232e] text-[#f4f3ef] shadow-sm"
+                  : "text-[#787c88] hover:text-[#f4f3ef]"
               }`}
             >
               All ({registrations.length})
@@ -225,21 +223,21 @@ export function CheckInScanner({ event, initialRegistrations }: CheckInScannerPr
               onClick={() => setStatusFilter("checked_in")}
               className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
                 statusFilter === "checked_in"
-                  ? "bg-emerald-600 text-white"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-emerald-950/60 text-emerald-300 border border-emerald-800/40"
+                  : "text-[#787c88] hover:text-[#f4f3ef]"
               }`}
             >
-              Checked In ({checkedInCount})
+              Arrived ({checkedInCount})
             </button>
             <button
               onClick={() => setStatusFilter("pending")}
               className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
                 statusFilter === "pending"
-                  ? "bg-amber-600 text-white"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-amber-950/60 text-amber-300 border border-amber-800/40"
+                  : "text-[#787c88] hover:text-[#f4f3ef]"
               }`}
             >
-              Pending ({totalCount - checkedInCount})
+              Awaiting ({totalCount - checkedInCount})
             </button>
           </div>
 
@@ -247,36 +245,36 @@ export function CheckInScanner({ event, initialRegistrations }: CheckInScannerPr
           <select
             value={paymentFilter}
             onChange={(e) => setPaymentFilter(e.target.value as any)}
-            className="h-10 rounded-xl bg-slate-900 border border-slate-800 px-3 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="h-9.5 rounded-xl bg-[#14161d] border border-white/[0.08] px-3 text-xs text-[#a4a8b5] focus:outline-none focus:ring-1 focus:ring-white/20"
           >
-            <option value="all">All Payments</option>
+            <option value="all">All Tiers</option>
             <option value="paid">Paid</option>
-            <option value="free">Free</option>
+            <option value="free">Complimentary</option>
             <option value="pending">Pending</option>
           </select>
         </div>
       </div>
 
-      {/* Registrations List */}
-      <div className="space-y-3">
+      {/* Guest List Entries */}
+      <div className="space-y-2.5">
         {filteredRegistrations.length > 0 ? (
           filteredRegistrations.map((reg) => (
             <div
               key={reg.id}
-              className={`p-4 rounded-2xl border transition-all ${
+              className={`p-4 rounded-xl border transition-all ${
                 reg.is_checked_in
-                  ? "bg-emerald-950/20 border-emerald-500/30"
-                  : "bg-slate-900/60 border-slate-800 hover:border-slate-700"
+                  ? "bg-[#111618] border-emerald-900/40"
+                  : "bg-[#13151b] border-white/[0.06] hover:border-white/[0.12]"
               }`}
             >
               <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-                {/* Attendee Info */}
-                <div className="flex items-start gap-3">
+                {/* Guest Info */}
+                <div className="flex items-start gap-3.5">
                   <div
-                    className={`h-10 w-10 rounded-xl flex items-center justify-center font-bold text-sm border ${
+                    className={`h-9 w-9 rounded-full flex items-center justify-center font-mono text-xs border ${
                       reg.is_checked_in
-                        ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
-                        : "bg-slate-800 text-slate-300 border-slate-700"
+                        ? "bg-emerald-950/50 text-emerald-300 border-emerald-800/50"
+                        : "bg-[#1b1e28] text-[#9ba0aa] border-white/[0.08]"
                     }`}
                   >
                     {reg.attendee_name
@@ -289,50 +287,51 @@ export function CheckInScanner({ event, initialRegistrations }: CheckInScannerPr
 
                   <div>
                     <div className="flex items-center gap-2">
-                      <h4 className="font-semibold text-white text-sm">{reg.attendee_name}</h4>
+                      <h4 className="font-serif font-medium text-[#f4f3ef] text-sm">
+                        {reg.attendee_name}
+                      </h4>
                       <Badge
                         variant={
                           reg.payment_status === "paid"
-                            ? "success"
+                            ? "default"
                             : reg.payment_status === "free"
                             ? "secondary"
                             : "warning"
                         }
                       >
-                        <CreditCard className="w-3 h-3 mr-0.5" />
-                        {reg.payment_status.toUpperCase()}
+                        {reg.payment_status === "free" ? "COMPLIMENTARY" : reg.payment_status.toUpperCase()}
                       </Badge>
                       {reg.is_checked_in ? (
                         <Badge variant="success">
-                          <CheckCircle2 className="w-3 h-3 mr-0.5" />
+                          <CheckCircle2 className="w-3 h-3 mr-1" />
                           Checked In
                         </Badge>
                       ) : (
                         <Badge variant="outline">
-                          <Clock className="w-3 h-3 mr-0.5" />
-                          Not Checked In
+                          <Clock className="w-3 h-3 mr-1" />
+                          Expected
                         </Badge>
                       )}
                     </div>
-                    <span className="text-xs text-slate-400">{reg.attendee_email}</span>
+                    <span className="text-xs text-[#787c88]">{reg.attendee_email}</span>
 
-                    {/* Check-in timestamp if present */}
+                    {/* Check-in timestamp */}
                     {reg.checked_in_at && (
-                      <span className="block text-[11px] text-emerald-400 mt-0.5">
-                        Checked in at: {formatDate(reg.checked_in_at)}
+                      <span className="block text-[11px] font-mono text-emerald-400/90 mt-0.5">
+                        Admitted at: {formatDate(reg.checked_in_at)}
                       </span>
                     )}
                   </div>
                 </div>
 
-                {/* Check-in Token & Actions */}
+                {/* Token ID & Check-in Toggle */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full lg:w-auto justify-end">
                   <div className="text-right">
-                    <span className="text-[10px] text-slate-400 uppercase font-mono block">
-                      Token UUID
+                    <span className="text-[10px] text-[#636773] uppercase font-mono block">
+                      Ticket Pass
                     </span>
-                    <code className="text-xs text-indigo-300 bg-slate-950 px-2 py-0.5 rounded border border-slate-800 font-mono">
-                      {reg.check_in_token.slice(0, 18)}...
+                    <code className="text-xs text-[#a4a8b5] bg-[#0c0d10] px-2 py-0.5 rounded border border-white/[0.06] font-mono">
+                      {reg.check_in_token.slice(0, 14)}...
                     </code>
                   </div>
 
@@ -342,34 +341,34 @@ export function CheckInScanner({ event, initialRegistrations }: CheckInScannerPr
                     onClick={() => handleToggle(reg.id)}
                     className={
                       reg.is_checked_in
-                        ? "border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/10 text-xs gap-1.5"
+                        ? "border-emerald-800/50 text-emerald-300 hover:bg-emerald-950/20 text-xs gap-1.5"
                         : "text-xs gap-1.5"
                     }
                   >
                     {reg.is_checked_in ? (
                       <>
-                        <RotateCcw className="w-3.5 h-3.5" />
-                        Undo Check-in
+                        <RotateCcw className="w-3 h-3 text-emerald-400" />
+                        Revert
                       </>
                     ) : (
                       <>
-                        <Check className="w-3.5 h-3.5" />
-                        Check In
+                        <Check className="w-3 h-3 text-[#0c0d10]" />
+                        Admit Guest
                       </>
                     )}
                   </Button>
                 </div>
               </div>
 
-              {/* Dynamic JSONB Form Data Preview */}
+              {/* Dynamic JSONB Questionnaire Chips */}
               {reg.form_data && Object.keys(reg.form_data).length > 0 && (
-                <div className="mt-3 pt-3 border-t border-slate-800/60 flex flex-wrap gap-2 text-xs">
+                <div className="mt-3 pt-3 border-t border-white/[0.05] flex flex-wrap gap-1.5 text-xs">
                   {Object.entries(reg.form_data).map(([key, val]) => (
                     <span
                       key={key}
-                      className="px-2.5 py-1 rounded-lg bg-slate-950/60 border border-slate-800 text-slate-300"
+                      className="px-2 py-0.5 rounded-md bg-[#0c0d10] border border-white/[0.06] text-[#b4b7c2] text-[11px] font-sans"
                     >
-                      <strong className="text-slate-400 font-normal mr-1">{key}:</strong>
+                      <span className="text-[#6c707d] mr-1.5 capitalize">{key.replace(/_/g, " ")}:</span>
                       {String(val)}
                     </span>
                   ))}
@@ -378,11 +377,11 @@ export function CheckInScanner({ event, initialRegistrations }: CheckInScannerPr
             </div>
           ))
         ) : (
-          <div className="p-12 text-center rounded-2xl border border-dashed border-slate-800 bg-slate-900/30">
-            <User className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-            <h4 className="text-sm font-semibold text-slate-300">No attendees match your filter</h4>
-            <p className="text-xs text-slate-500 mt-1">
-              Try adjusting your search query or payment status filter
+          <div className="p-12 text-center rounded-2xl border border-dashed border-white/[0.08] bg-[#12141a]/40">
+            <User className="w-7 h-7 text-[#555a67] mx-auto mb-2" />
+            <h4 className="text-sm font-serif font-medium text-[#f4f3ef]">No matching guests found</h4>
+            <p className="text-xs text-[#787c88] mt-1">
+              Check your search query or filter settings
             </p>
           </div>
         )}

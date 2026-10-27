@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ExternalLink, QrCode, Users, ArrowRight } from "lucide-react";
+import { ExternalLink, ArrowRight, UserCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatTicketPrice, formatDate } from "@/lib/utils";
@@ -16,48 +16,50 @@ export function EventCard({ event }: EventCardProps) {
   const isFree = event.ticket_price === 0;
 
   return (
-    <div className="glass-card rounded-2xl p-6 flex flex-col justify-between relative group">
+    <div className="editorial-card rounded-2xl p-6 flex flex-col justify-between group">
       <div>
         {/* Top Badges */}
-        <div className="flex items-center justify-between gap-2 mb-3">
+        <div className="flex items-center justify-between gap-2 mb-3.5">
           <Badge variant={isFree ? "success" : "default"}>
             {formatTicketPrice(event.ticket_price, event.currency)}
           </Badge>
-          <span className="text-xs text-slate-400">Created {formatDate(event.created_at)}</span>
+          <span className="text-[11px] font-mono text-[#787c88]">
+            {formatDate(event.created_at)}
+          </span>
         </div>
 
         {/* Title & Description */}
-        <h4 className="text-lg font-bold text-white group-hover:text-indigo-300 transition-colors line-clamp-1">
+        <h4 className="font-serif text-lg font-medium text-[#f4f3ef] group-hover:text-[#e07a5f] transition-colors line-clamp-1 leading-snug">
           {event.title}
         </h4>
-        <p className="text-xs text-slate-400 mt-2 line-clamp-2 leading-relaxed">
+        <p className="text-xs text-[#8c909a] mt-2 line-clamp-2 leading-relaxed">
           {event.description || "No description provided."}
         </p>
 
-        {/* Custom fields count indicator */}
-        <div className="mt-4 flex items-center gap-2 text-xs text-slate-400">
-          <span className="px-2 py-0.5 rounded-md bg-slate-800/80 border border-slate-700/60">
+        {/* Meta Pills */}
+        <div className="mt-4 flex items-center gap-2 text-[11px] text-[#787c88]">
+          <span className="px-2 py-0.5 rounded bg-[#181a22] border border-white/[0.06] font-mono">
             {event.custom_fields?.length || 0} custom questions
           </span>
-          <span className="px-2 py-0.5 rounded-md bg-slate-800/80 border border-slate-700/60">
+          <span className="px-2 py-0.5 rounded bg-[#181a22] border border-white/[0.06] font-mono">
             {event.currency}
           </span>
         </div>
 
-        {/* Check-in Attendance Progress Bar */}
-        <div className="mt-5 p-3 rounded-xl bg-slate-900/60 border border-slate-800/80">
-          <div className="flex items-center justify-between text-xs text-slate-300 mb-1.5 font-medium">
-            <span className="flex items-center gap-1.5">
-              <Users className="w-3.5 h-3.5 text-indigo-400" />
-              Attendance
+        {/* Attendance Meter */}
+        <div className="mt-5 p-3 rounded-xl bg-[#101217] border border-white/[0.06]">
+          <div className="flex items-center justify-between text-xs text-[#c4c7d0] mb-2 font-medium">
+            <span className="flex items-center gap-1.5 text-xs text-[#8c909a]">
+              <UserCheck className="w-3.5 h-3.5 text-[#e07a5f]" />
+              Guest Check-in
             </span>
-            <span>
-              {checkedIn} / {registered} checked in ({checkInRate}%)
+            <span className="font-mono text-[11px] text-[#f4f3ef]">
+              {checkedIn} / {registered} ({checkInRate}%)
             </span>
           </div>
-          <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+          <div className="w-full bg-[#1b1e28] rounded-full h-1.5 overflow-hidden">
             <div
-              className="bg-gradient-to-r from-indigo-500 to-emerald-400 h-2 rounded-full transition-all duration-500"
+              className="bg-[#e07a5f] h-1.5 rounded-full transition-all duration-500"
               style={{ width: `${checkInRate}%` }}
             />
           </div>
@@ -65,18 +67,17 @@ export function EventCard({ event }: EventCardProps) {
       </div>
 
       {/* Action Buttons */}
-      <div className="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between gap-2">
+      <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-between gap-2.5">
         <Link href={`/events/${event.id}`} target="_blank" className="flex-1">
-          <Button size="sm" variant="outline" className="w-full text-xs gap-1.5">
-            <ExternalLink className="w-3.5 h-3.5" />
-            Public Form
+          <Button size="sm" variant="outline" className="w-full text-xs gap-1.5 justify-center">
+            <ExternalLink className="w-3 h-3 text-[#7d8290]" />
+            Public Page
           </Button>
         </Link>
         <Link href={`/dashboard/events/${event.id}`} className="flex-1">
-          <Button size="sm" variant="primary" className="w-full text-xs gap-1.5">
-            <QrCode className="w-3.5 h-3.5" />
-            Check-in Desk
-            <ArrowRight className="w-3 h-3 ml-0.5" />
+          <Button size="sm" variant="secondary" className="w-full text-xs gap-1.5 justify-center">
+            <span>Check-in Desk</span>
+            <ArrowRight className="w-3 h-3 text-[#7d8290]" />
           </Button>
         </Link>
       </div>

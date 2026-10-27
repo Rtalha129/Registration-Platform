@@ -2,7 +2,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "outline" | "ghost" | "danger" | "glow";
+  variant?: "primary" | "secondary" | "outline" | "ghost" | "danger" | "warm";
   size?: "sm" | "md" | "lg";
   isLoading?: boolean;
 }
@@ -10,21 +10,22 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", size = "md", isLoading, children, disabled, ...props }, ref) => {
     const sizeStyles = {
-      sm: "h-8 px-3 text-xs rounded-lg",
-      md: "h-10 px-4 text-sm rounded-xl",
-      lg: "h-12 px-6 text-base rounded-xl font-semibold",
+      sm: "h-8 px-3 text-xs rounded-lg gap-1.5",
+      md: "h-9.5 px-4 text-xs font-medium rounded-xl gap-2",
+      lg: "h-11 px-5.5 text-sm font-medium rounded-xl gap-2.5",
     };
 
     const variantStyles = {
       primary:
-        "bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/25 active:scale-[0.98] transition-all",
+        "bg-[#f4f3ef] text-[#0c0d10] hover:bg-white active:bg-[#e4e3dd] shadow-[0_1px_2px_rgba(0,0,0,0.4)] border border-white/20 active:scale-[0.99] transition-all",
       secondary:
-        "bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700/80 active:scale-[0.98] transition-all",
+        "bg-[#181b22] hover:bg-[#20242f] text-[#ecebe5] border border-white/[0.08] hover:border-white/[0.16] shadow-sm active:scale-[0.99] transition-all",
+      warm:
+        "bg-[#e07a5f] hover:bg-[#d66e53] text-white shadow-[0_1px_3px_rgba(224,122,95,0.3)] border border-[#e07a5f]/40 active:scale-[0.99] transition-all",
       outline:
-        "bg-transparent border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white transition-all",
-      ghost: "hover:bg-slate-800/60 text-slate-400 hover:text-slate-100 transition-colors",
-      danger: "bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-600/25 transition-all",
-      glow: "bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:opacity-95 text-white shadow-lg shadow-purple-500/25 font-semibold active:scale-[0.98] transition-all",
+        "bg-transparent border border-white/[0.12] hover:border-white/[0.25] text-[#c7c9d1] hover:text-white transition-all",
+      ghost: "hover:bg-white/[0.05] text-[#8e929e] hover:text-[#f4f3ef] transition-colors",
+      danger: "bg-rose-950/40 hover:bg-rose-900/50 text-rose-300 border border-rose-800/40 transition-all",
     };
 
     return (
@@ -32,7 +33,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || isLoading}
         className={cn(
-          "inline-flex items-center justify-center font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed select-none cursor-pointer",
+          "inline-flex items-center justify-center select-none cursor-pointer tracking-tight font-sans transition-all duration-150 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/30 disabled:opacity-40 disabled:cursor-not-allowed",
           sizeStyles[size],
           variantStyles[variant],
           className
@@ -41,7 +42,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {isLoading && (
           <svg
-            className="animate-spin -ml-1 mr-2 h-4 w-4 text-current"
+            className="animate-spin -ml-1 mr-2 h-3.5 w-3.5 text-current"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
