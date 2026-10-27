@@ -157,19 +157,30 @@ export default function SignupPage() {
               </div>
             </div>
 
-            <div className="pt-2">
-              <Button
-                type="submit"
-                variant="primary"
-                size="lg"
-                isLoading={isLoading}
-                className="w-full text-xs font-medium py-3.5"
-              >
-                Initialize Organizer Workspace
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </div>
-          </form>
+              {/* Option directly under the text boxes */}
+              <div className="pt-1 pb-1 flex items-center justify-between text-xs text-zinc-400">
+                <span>Already have an account?</span>
+                <Link
+                  href="/login"
+                  className="text-[#f4f3ef] font-medium underline decoration-[#e07a5f] hover:text-[#e07a5f] transition-colors"
+                >
+                  Sign in instead
+                </Link>
+              </div>
+
+              <div className="pt-2">
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="lg"
+                  isLoading={isLoading}
+                  className="w-full text-xs font-medium py-3.5"
+                >
+                  Initialize Organizer Workspace
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
+            </form>
 
           <div className="pt-4 border-t border-white/[0.06] text-center text-xs text-zinc-400">
             Already registered with an active desk?{" "}

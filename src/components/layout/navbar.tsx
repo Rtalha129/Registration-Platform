@@ -100,18 +100,15 @@ export function Navbar({ user }: NavbarProps) {
               </Button>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
-              <Link href="/login">
-                <Button size="sm" variant="ghost" className="text-xs">
-                  Sign In
-                </Button>
-              </Link>
-              <Link href="/signup">
-                <Button size="sm" variant="primary" className="text-xs">
-                  Host an Event
-                </Button>
-              </Link>
-            </div>
+            <Link href="/login">
+              <Button
+                size="sm"
+                variant="outline"
+                className="text-xs px-4 h-9 font-medium border-white/20 hover:border-[#e07a5f] text-[#f4f3ef] bg-white/[0.03] transition-colors"
+              >
+                Sign In
+              </Button>
+            </Link>
           )}
         </div>
       </div>
