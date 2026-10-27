@@ -5,6 +5,7 @@ import { getOrganizerSession } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { CheckInScanner } from "@/components/dashboard/check-in-scanner";
+import { ShareFormBanner } from "@/components/dashboard/share-form-banner";
 import type { EventWithParsedFields, CustomField } from "@/types/models";
 
 export const dynamic = "force-dynamic";
@@ -73,11 +74,14 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
           <Link href={`/events/${event.id}`} target="_blank">
             <Button size="sm" variant="outline" className="text-xs gap-1.5">
               <ExternalLink className="w-3.5 h-3.5 text-[#e07a5f]" />
-              View Public Guest Dossier & RSVP
+              Open Form in New Tab
             </Button>
           </Link>
         </div>
       </div>
+
+      {/* Shareable Private Form Link Banner */}
+      <ShareFormBanner eventId={event.id} eventTitle={event.title} />
 
       {/* Main Check-in Scanner Desk Component */}
       <CheckInScanner event={event} initialRegistrations={registrations} />

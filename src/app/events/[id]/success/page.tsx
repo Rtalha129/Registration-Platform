@@ -1,9 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Home, Compass } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { Button } from "@/components/ui/button";
 import { TicketBadge } from "@/components/events/ticket-badge";
+import { SuccessReceiptActions } from "@/components/events/success-receipt-actions";
 import type { Registration } from "@/types/models";
 
 export const dynamic = "force-dynamic";
@@ -77,26 +75,13 @@ export default async function RegistrationSuccessPage({
           </p>
         </div>
 
-        {/* Tactile Admission Ticket Badge */}
+        {/* Tactile Admission Ticket Badge with QR Code */}
         <div className="pt-2">
           <TicketBadge registration={registration as Registration} event={event} />
         </div>
 
-        {/* Action Controls */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-6 border-t border-white/[0.08]">
-          <Link href="/">
-            <Button variant="ghost" size="md" className="gap-2 text-xs">
-              <Home className="w-4 h-4 text-zinc-400" />
-              Return to Gatherings Index
-            </Button>
-          </Link>
-          <Link href={`/dashboard/events/${event.id}`}>
-            <Button variant="outline" size="md" className="gap-2 text-xs">
-              <Compass className="w-4 h-4 text-[#e07a5f]" />
-              Open Organizer Concierge Desk
-            </Button>
-          </Link>
-        </div>
+        {/* Email Dispatched Receipt Notice & Print Actions */}
+        <SuccessReceiptActions registration={registration as Registration} event={event} />
       </div>
     </div>
   );

@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import QRCode from "qrcode";
 import { Calendar, CheckCircle } from "lucide-react";
 import { formatTicketPrice, formatDate } from "@/lib/utils";
 import type { Event, Registration } from "@/types/models";
@@ -5,9 +9,27 @@ import type { Event, Registration } from "@/types/models";
 interface TicketBadgeProps {
   registration: Registration;
   event: Event;
+  qrDataUrl?: string;
 }
 
-export function TicketBadge({ registration, event }: TicketBadgeProps) {
+export function TicketBadge({ registration, event, qrDataUrl: initialQr }: TicketBadgeProps) {
+  const [qrCodeUrl, setQrCodeUrl] = useState<string>(initialQr || "");
+
+  useEffect(() => {
+    if (!qrCodeUrl && registration?.check_in_token) {
+      QRCode.toDataURL(registration.check_in_token, {
+        width: 300,
+        margin: 2,
+        color: {
+          dark: "#0c0d10",
+          light: "#ffffff",
+        },
+      })
+        .then((url) => setQrCodeUrl(url))
+        .catch((err) => console.error("Error generating QR code:", err));
+    }
+  }, [registration?.check_in_token, qrCodeUrl]);
+
   return (
     <div className="max-w-md mx-auto w-full rounded-2xl overflow-hidden border border-white/[0.12] bg-[#14161d] shadow-[0_8px_32px_rgba(0,0,0,0.6)] relative">
       {/* Top Section - Event Details */}
@@ -55,28 +77,34 @@ export function TicketBadge({ registration, event }: TicketBadgeProps) {
 
           <div>
             <span className="text-[10px] font-mono text-[#636773] uppercase tracking-wider block">
-              Admission Tier
+              Admission Fare
             </span>
             <span className="text-sm font-serif font-medium text-[#f4f3ef] block mt-0.5">
               {formatTicketPrice(event.ticket_price, event.currency)}
             </span>
             <span className="text-[11px] text-[#787c88] block">
-              {registration.stripe_payment_id ? "Stripe Verified" : "Direct RSVP"}
+              {registration.stripe_payment_id ? "Paid & Verified" : "Complimentary RSVP"}
             </span>
           </div>
         </div>
 
-        {/* QR Code and Barcode Box */}
+        {/* Real QR Code Box */}
         <div className="p-5 rounded-xl bg-[#0c0d10] border border-white/[0.07] flex flex-col items-center text-center">
           <div className="p-3 rounded-lg bg-white mb-3 shadow-sm">
-            {/* SVG QR Code */}
-            <svg
-              className="w-28 h-28 text-[#0c0d10]"
-              viewBox="0 0 100 100"
-              fill="currentColor"
-            >
-              <path d="M0 0h30v30H0zM10 10h10v10H10zM70 0h30v30H70zM80 10h10v10H80zM0 70h30v30H0zM10 80h10v10H10zM40 0h10v20H40zM50 10h20v10H50zM40 30h10v10H40zM20 40h20v10H20zM60 40h30v10H60zM0 50h20v10H0zM30 60h20v10H30zM70 60h20v10H70zM40 70h20v20H40zM80 80h20v20H80z" />
-            </svg>
+            {qrCodeUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={qrCodeUrl}
+                alt="Admission QR Pass"
+                width={128}
+                height={128}
+                className="w-32 h-32 object-contain"
+              />
+            ) : (
+              <div className="w-32 h-32 flex items-center justify-center text-xs text-zinc-500 font-mono">
+                Generating pass...
+              </div>
+            )}
           </div>
 
           {/* Barcode Graphic */}
@@ -87,7 +115,7 @@ export function TicketBadge({ registration, event }: TicketBadgeProps) {
           </div>
 
           <span className="text-[10px] uppercase font-mono tracking-widest text-[#636773]">
-            Admission Token
+            Admission Token Passcode
           </span>
           <code className="text-[11px] font-mono text-[#e07a5f] mt-1 select-all break-all bg-[#14161d] px-2.5 py-1 rounded border border-white/[0.06]">
             {registration.check_in_token}
@@ -98,7 +126,7 @@ export function TicketBadge({ registration, event }: TicketBadgeProps) {
         <div className="flex items-center justify-between text-xs text-[#787c88] pt-1">
           <span className="flex items-center gap-1.5 text-emerald-400 font-sans text-[11px]">
             <CheckCircle className="w-3.5 h-3.5" />
-            Verified & Valid
+            Receipt & Pass Emailed
           </span>
           <span className="font-mono text-[10px] text-[#636773]">
             REF #{registration.id.slice(0, 8).toUpperCase()}

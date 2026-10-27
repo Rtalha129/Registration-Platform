@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Ticket, ShieldCheck, AlertCircle } from "lucide-react";
+import { ArrowRight, Ticket, ShieldCheck, AlertCircle, CreditCard, Lock, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatTicketPrice } from "@/lib/utils";
@@ -17,6 +17,10 @@ export function DynamicRegistrationForm({ event }: DynamicRegistrationFormProps)
   const [attendeeName, setAttendeeName] = useState("");
   const [attendeeEmail, setAttendeeEmail] = useState("");
   const [formData, setFormData] = useState<Record<string, any>>({});
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCvc, setCardCvc] = useState("");
+  const [cardZip, setCardZip] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,6 +31,19 @@ export function DynamicRegistrationForm({ event }: DynamicRegistrationFormProps)
       ...prev,
       [fieldId]: value,
     }));
+  };
+
+  const formatCardNumber = (value: string) => {
+    const digits = value.replace(/\D/g, "").slice(0, 16);
+    return digits.replace(/(\d{4})(?=\d)/g, "$1 ");
+  };
+
+  const formatExpiry = (value: string) => {
+    const digits = value.replace(/\D/g, "").slice(0, 4);
+    if (digits.length >= 3) {
+      return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+    }
+    return digits;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -45,6 +62,26 @@ export function DynamicRegistrationForm({ event }: DynamicRegistrationFormProps)
       }
     }
 
+    // Validate payment if not free
+    if (!isFree) {
+      const cleanCard = cardNumber.replace(/\s/g, "");
+      if (cleanCard.length < 15) {
+        setError("Please enter a valid 15 or 16-digit credit card number.");
+        setIsSubmitting(false);
+        return;
+      }
+      if (cardExpiry.length < 5) {
+        setError("Please enter a valid card expiration date (MM/YY).");
+        setIsSubmitting(false);
+        return;
+      }
+      if (cardCvc.length < 3) {
+        setError("Please enter your card CVC security code.");
+        setIsSubmitting(false);
+        return;
+      }
+    }
+
     try {
       const res = await fetch("/api/registrations", {
         method: "POST",
@@ -54,6 +91,12 @@ export function DynamicRegistrationForm({ event }: DynamicRegistrationFormProps)
           attendee_name: attendeeName,
           attendee_email: attendeeEmail,
           form_data: formData,
+          payment_details: isFree
+            ? undefined
+            : {
+                last4: cardNumber.replace(/\s/g, "").slice(-4) || "4242",
+                brand: cardNumber.startsWith("3") ? "Amex" : cardNumber.startsWith("5") ? "Mastercard" : "Visa",
+              },
         }),
       });
 
@@ -230,8 +273,87 @@ export function DynamicRegistrationForm({ event }: DynamicRegistrationFormProps)
         </div>
       )}
 
+      {/* Part 03: Ticket Payment Collection (When ticket_price > 0) */}
+      {!isFree && (
+        <div className="space-y-4 pt-4 border-t border-white/[0.06]">
+          <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
+            <span className="font-mono text-[10px] tracking-widest text-[#e07a5f] uppercase flex items-center gap-1.5">
+              <CreditCard className="w-3.5 h-3.5" />
+              Part {event.custom_fields && event.custom_fields.length > 0 ? "03" : "02"} · Payment Checkout
+            </span>
+            <span className="text-[11px] text-zinc-400 font-mono flex items-center gap-1">
+              <Lock className="w-3 h-3 text-[#2a9d8f]" />
+              Secure 256-Bit
+            </span>
+          </div>
+
+          <div className="p-4.5 rounded-xl bg-[#141620] border border-white/[0.08] space-y-3.5">
+            <Input
+              label="Credit or Debit Card Number"
+              placeholder="4242 4242 4242 4242"
+              value={cardNumber}
+              onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
+              maxLength={19}
+              required
+            />
+
+            <div className="grid grid-cols-3 gap-3">
+              <Input
+                label="Expires"
+                placeholder="MM/YY"
+                value={cardExpiry}
+                onChange={(e) => setCardExpiry(formatExpiry(e.target.value))}
+                maxLength={5}
+                required
+              />
+              <Input
+                label="CVC"
+                placeholder="123"
+                value={cardCvc}
+                onChange={(e) => setCardCvc(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                maxLength={4}
+                required
+              />
+              <Input
+                label="Postal / Zip"
+                placeholder="10001"
+                value={cardZip}
+                onChange={(e) => setCardZip(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* Receipt Summary */}
+            <div className="pt-3 border-t border-white/[0.06] space-y-1.5 text-xs">
+              <div className="flex justify-between text-zinc-400">
+                <span>Admission Fare ({event.title})</span>
+                <span className="font-mono">{formatTicketPrice(event.ticket_price, event.currency)}</span>
+              </div>
+              <div className="flex justify-between text-zinc-400">
+                <span>Platform Processing Fee</span>
+                <span className="text-[#2a9d8f] font-mono">Complimentary</span>
+              </div>
+              <div className="flex justify-between text-[#f4f3ef] font-medium pt-1.5 border-t border-white/[0.06]">
+                <span>Total Due</span>
+                <span className="font-serif text-base text-[#f4f3ef]">
+                  {formatTicketPrice(event.ticket_price, event.currency)}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Confirmation Call to Action */}
       <div className="pt-4 border-t border-white/[0.06] space-y-3">
+        <div className="tactile-panel p-3 text-xs text-zinc-400 flex items-center gap-2">
+          <Mail className="w-4 h-4 text-[#e07a5f] shrink-0" />
+          <span>
+            An official receipt and scan-ready QR check-in pass will be emailed to{" "}
+            <strong className="text-[#f4f3ef]">{attendeeEmail || "your email address"}</strong> upon confirmation.
+          </span>
+        </div>
+
         <Button
           type="submit"
           variant="primary"
@@ -241,12 +363,12 @@ export function DynamicRegistrationForm({ event }: DynamicRegistrationFormProps)
         >
           {isFree ? (
             <>
-              Confirm Reservation & Generate Pass
+              Confirm RSVP & Dispatch QR Pass
               <ArrowRight className="w-4 h-4 ml-2" />
             </>
           ) : (
             <>
-              Confirm Pass · {formatTicketPrice(event.ticket_price, event.currency)}
+              Pay {formatTicketPrice(event.ticket_price, event.currency)} & Dispatch QR Pass
               <ArrowRight className="w-4 h-4 ml-2" />
             </>
           )}

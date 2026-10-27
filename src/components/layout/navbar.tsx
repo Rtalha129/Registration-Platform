@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Calendar, LayoutDashboard, LogOut } from "lucide-react";
+import { LayoutDashboard, LogOut } from "lucide-react";
 import { Button } from "../ui/button";
 
 interface NavbarProps {
@@ -52,20 +52,15 @@ export function Navbar({ user }: NavbarProps) {
 
         {/* Navigation links */}
         <nav className="hidden md:flex items-center gap-7 text-xs font-sans tracking-tight">
-          <Link
-            href="/"
-            className="text-[#9ba0aa] hover:text-[#f4f3ef] transition-colors flex items-center gap-1.5"
-          >
-            <Calendar className="w-3.5 h-3.5 text-[#7d8290]" />
-            Gatherings
-          </Link>
-          <Link
-            href="/dashboard"
-            className="text-[#9ba0aa] hover:text-[#f4f3ef] transition-colors flex items-center gap-1.5"
-          >
-            <LayoutDashboard className="w-3.5 h-3.5 text-[#7d8290]" />
-            Organizer Desk
-          </Link>
+          {user && (
+            <Link
+              href="/dashboard"
+              className="text-[#9ba0aa] hover:text-[#f4f3ef] transition-colors flex items-center gap-1.5"
+            >
+              <LayoutDashboard className="w-3.5 h-3.5 text-[#7d8290]" />
+              Organizer Desk
+            </Link>
+          )}
         </nav>
 
         {/* User Session / Auth Controls */}

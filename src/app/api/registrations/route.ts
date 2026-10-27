@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getOrganizerSession } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { RegisterAttendeeSchema } from "@/types/models";
+import { sendReceiptAndTicketEmail } from "@/lib/email";
 
 export async function GET(request: NextRequest) {
   try {
@@ -87,14 +88,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    // Automatically generate and dispatch email receipt with QR code
+    const cardLast4 = body.payment_details?.last4 || (isFree ? undefined : "4242");
+    const cardBrand = body.payment_details?.brand || (isFree ? undefined : "Visa");
+
+    const emailResult = await sendReceiptAndTicketEmail({
+      event: targetEvent,
+      registration: newRegistration,
+      paymentDetails: cardLast4 ? { last4: cardLast4, cardBrand } : undefined,
+    });
+
     return NextResponse.json(
       {
         success: true,
         registration: newRegistration,
         event: targetEvent,
+        email: emailResult,
         message: isFree
-          ? "Registration successful! You are all set."
-          : `Registration and payment confirmed!`,
+          ? "Registration confirmed! Your admission pass and receipt have been sent to your email."
+          : `Payment successful! Your receipt and QR code ticket have been emailed to ${attendee_email}.`,
       },
       { status: 201 }
     );

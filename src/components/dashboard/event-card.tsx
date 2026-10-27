@@ -1,5 +1,8 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
-import { ExternalLink, ArrowRight, UserCheck } from "lucide-react";
+import { ExternalLink, ArrowRight, UserCheck, Copy, Check } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatTicketPrice, formatDate } from "@/lib/utils";
@@ -10,10 +13,19 @@ interface EventCardProps {
 }
 
 export function EventCard({ event }: EventCardProps) {
+  const [copied, setCopied] = useState(false);
   const registered = event.registrations_count || 0;
   const checkedIn = event.checked_in_count || 0;
   const checkInRate = registered > 0 ? Math.round((checkedIn / registered) * 100) : 0;
   const isFree = event.ticket_price === 0;
+
+  const handleCopyLink = () => {
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
+    const url = `${origin}/events/${event.id}`;
+    navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <div className="editorial-card rounded-2xl p-6 flex flex-col justify-between group">
@@ -39,7 +51,7 @@ export function EventCard({ event }: EventCardProps) {
         {/* Meta Pills */}
         <div className="mt-4 flex items-center gap-2 text-[11px] text-[#787c88]">
           <span className="px-2 py-0.5 rounded bg-[#181a22] border border-white/[0.06] font-mono">
-            {event.custom_fields?.length || 0} custom questions
+            {event.custom_fields?.length || 0} questions
           </span>
           <span className="px-2 py-0.5 rounded bg-[#181a22] border border-white/[0.06] font-mono">
             {event.currency}
@@ -66,21 +78,43 @@ export function EventCard({ event }: EventCardProps) {
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-between gap-2.5">
-        <Link href={`/events/${event.id}`} target="_blank" className="flex-1">
-          <Button size="sm" variant="outline" className="w-full text-xs gap-1.5 justify-center">
-            <ExternalLink className="w-3 h-3 text-[#7d8290]" />
-            Public Page
-          </Button>
-        </Link>
-        <Link href={`/dashboard/events/${event.id}`} className="flex-1">
-          <Button size="sm" variant="secondary" className="w-full text-xs gap-1.5 justify-center">
-            <span>Check-in Desk</span>
-            <ArrowRight className="w-3 h-3 text-[#7d8290]" />
-          </Button>
-        </Link>
+      {/* Action Buttons: Copy Share Link, View Form, Check-in Desk */}
+      <div className="mt-6 pt-4 border-t border-white/[0.06] space-y-2">
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={handleCopyLink}
+          className="w-full text-xs gap-1.5 justify-center border-dashed border-white/20 hover:border-[#e07a5f]"
+        >
+          {copied ? (
+            <>
+              <Check className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="text-emerald-300">Share Link Copied!</span>
+            </>
+          ) : (
+            <>
+              <Copy className="w-3.5 h-3.5 text-[#e07a5f]" />
+              <span>Copy Shareable Form Link</span>
+            </>
+          )}
+        </Button>
+
+        <div className="flex items-center justify-between gap-2">
+          <Link href={`/events/${event.id}`} target="_blank" className="flex-1">
+            <Button size="sm" variant="ghost" className="w-full text-xs gap-1.5 justify-center text-zinc-400 hover:text-white">
+              <ExternalLink className="w-3 h-3 text-[#7d8290]" />
+              Open Form
+            </Button>
+          </Link>
+          <Link href={`/dashboard/events/${event.id}`} className="flex-1">
+            <Button size="sm" variant="secondary" className="w-full text-xs gap-1.5 justify-center">
+              <span>Check-in Desk</span>
+              <ArrowRight className="w-3 h-3 text-[#7d8290]" />
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
   );
 }
+
