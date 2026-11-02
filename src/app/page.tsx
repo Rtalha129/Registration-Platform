@@ -17,11 +17,6 @@ export default function HomePage() {
     <div className="flex flex-col items-center">
       {/* Hero Section */}
       <section className="relative w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 text-center">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-white/[0.08] bg-[#14161c] text-[#a4a8b5] text-[11px] font-mono tracking-wider uppercase mb-8 shadow-sm">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#e07a5f]" />
-          EventFlow Studio · Private Event Form Engine
-        </div>
-
         <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif tracking-tight text-[#f4f3ef] max-w-4xl mx-auto leading-[1.08]">
           Create event forms that collect <span className="italic font-light text-[#e07a5f]">payments</span>, receipts & QR passes.
         </h1>
